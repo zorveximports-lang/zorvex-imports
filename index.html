@@ -133,6 +133,88 @@
   <footer>
     © 2026 Zorvex Imports. Todos os direitos reservados.
   </footer>
+
+<script>
+const SUPABASE_URL = "https://omrdhnnvzngocheyfcly.supabase.co";
+const SUPABASE_KEY = "sb_publishable_-BtO4hsplQ47jC6yTC4T6w_xrTSKGWz";
+
+async function carregarProdutos() {
+  const lista = document.getElementById("lista-produtos");
+
+  try {
+    const resposta = await fetch(
+      `${SUPABASE_URL}/rest/v1/products?select=name,description,price,image_url,stock,slug&active=eq.true&order=created_at.desc`,
+      {
+        headers: {
+          "apikey": SUPABASE_KEY
+        }
+      }
+    );
+
+    if (!resposta.ok) {
+      throw new Error(`Erro HTTP ${resposta.status}`);
+    }
+
+    const produtos = await resposta.json();
+    lista.replaceChildren();
+
+    if (produtos.length === 0) {
+      const aviso = document.createElement("div");
+      aviso.className = "card";
+      aviso.textContent = "Nosso catálogo está sendo preparado. Em breve teremos novidades!";
+      lista.appendChild(aviso);
+      return;
+    }
+
+    produtos.forEach(produto => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      if (produto.image_url) {
+        const imagem = document.createElement("img");
+        imagem.src = produto.image_url;
+        imagem.alt = produto.name;
+        imagem.loading = "lazy";
+        card.appendChild(imagem);
+      }
+
+      const nome = document.createElement("h3");
+      nome.textContent = produto.name;
+      card.appendChild(nome);
+
+      if (produto.description) {
+        const descricao = document.createElement("p");
+        descricao.textContent = produto.description;
+        card.appendChild(descricao);
+      }
+
+      const preco = document.createElement("p");
+      preco.className = "price";
+      preco.textContent = Number(produto.price).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL"
+      });
+      card.appendChild(preco);
+
+      const disponibilidade = document.createElement("p");
+      disponibilidade.textContent =
+        produto.stock > 0
+          ? "Disponível para consulta"
+          : "Consulte a disponibilidade";
+      card.appendChild(disponibilidade);
+
+      lista.appendChild(card);
+    });
+
+  } catch (erro) {
+    console.error("Erro ao carregar produtos:", erro);
+    lista.textContent = "Não foi possível carregar o catálogo neste momento.";
+  }
+}
+
+carregarProdutos();
+</script>
+
 </body>
 </html>
 

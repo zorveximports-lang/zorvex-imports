@@ -174,7 +174,20 @@
     transition: none;
   }
 }
-
+/* Apresentação técnica dos produtos */
+#produtos .card .product-details {
+  display: inline-block;
+  background: rgba(214, 174, 100, 0.10);
+  color: #e5c58b;
+  border: 1px solid rgba(214, 174, 100, 0.30);
+  border-radius: 8px;
+  padding: 8px 11px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin: 0 0 12px;
+}
+    
   </style>
 </head>
 <body>
@@ -266,6 +279,25 @@ async function carregarProdutos() {
       const nome = document.createElement("h3");
       nome.textContent = produto.name;
       card.appendChild(nome);
+      // Apresentação técnica do produto
+const detalhes = [];
+
+if (produto.concentration) {
+  detalhes.push(produto.concentration);
+}
+
+if (produto.package_quantity) {
+  detalhes.push(
+    `Embalagem com ${produto.package_quantity} unidades`
+  );
+}
+
+if (detalhes.length > 0) {
+  const apresentacao = document.createElement("p");
+  apresentacao.className = "product-details";
+  apresentacao.textContent = detalhes.join(" • ");
+  card.appendChild(apresentacao);
+}
 
       if (produto.description) {
         const descricao = document.createElement("p");

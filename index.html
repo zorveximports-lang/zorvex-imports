@@ -109,15 +109,15 @@
   </section>
 
   <main>
-    <section id="categorias">
-      <h2>Nossas categorias</h2>
-      <div class="grid">
-        <div class="card"><h3>Eletrônicos</h3><p>Tecnologia para o cotidiano.</p></div>
-        <div class="card"><h3>Acessórios</h3><p>Praticidade e funcionalidade.</p></div>
-        <div class="card"><h3>Tecnologia</h3><p>Novidades e soluções inteligentes.</p></div>
-        <div class="card"><h3>Ferramentas</h3><p>Produtos para diferentes necessidades.</p></div>
-      </div>
-    </section>
+
+<section id="categorias">
+  <h2>Nossas categorias</h2>
+  <div class="grid" id="lista-categorias">
+    <div class="card">
+      Carregando categorias...
+    </div>
+  </div>
+</section>
 
     <section id="produtos" style="margin-top:60px">
       <h2>Catálogo de produtos</h2>
@@ -212,8 +212,51 @@ async function carregarProdutos() {
   }
 }
 
-carregarProdutos();
-</script>
+async function carregarCategorias() {
+  const lista = document.getElementById("lista-categorias");
+  if (!lista) return;
+
+  try {
+    const resposta = await fetch(
+      `${SUPABASE_URL}/categories?select=id,name,slug&active=eq.true&order=name.asc`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY
+        }
+      }
+    );
+
+    if (!resposta.ok) {
+      throw new Error(`Erro HTTP ${resposta.status}`);
+    }
+
+    const categorias = await resposta.json();
+    lista.replaceChildren();
+
+    if (categorias.length === 0) {
+      lista.textContent = "Nenhuma categoria disponível.";
+      return;
+    }
+
+    categorias.forEach(categoria => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const titulo = document.createElement("h3");
+      titulo.textContent = categoria.name;
+
+      card.appendChild(titulo);
+      lista.appendChild(card);
+    });
+
+  } catch (erro) {
+    console.error("Erro ao carregar categorias:", erro);
+    lista.textContent = "Não foi possível carregar as categorias.";
+  }
+}
+
+carregarCategorias();
+carregarProdutos();</script>
 
 </body>
 </html>

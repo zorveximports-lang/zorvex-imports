@@ -1,1 +1,138 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Zorvex Imports - produtos selecionados, tecnologia e novidades.">
+  <title>Zorvex Imports | Catálogo</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #162235;
+      --accent: #d6ae64;
+      --text: #f8fafc;
+      --muted: #b9c3d1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+    }
+    header {
+      padding: 24px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #334155;
+    }
+    .brand {
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    nav a {
+      color: var(--text);
+      text-decoration: none;
+      margin-left: 16px;
+    }
+    .hero {
+      padding: 85px 6%;
+      text-align: center;
+      background: linear-gradient(140deg, #14233a, #0b1220);
+    }
+    h1 { font-size: clamp(32px, 5vw, 56px); }
+    .hero p { color: var(--muted); font-size: 19px; }
+    .btn {
+      display: inline-block;
+      padding: 14px 24px;
+      background: var(--accent);
+      color: #111827;
+      text-decoration: none;
+      border-radius: 9px;
+      font-weight: bold;
+      border: 0;
+      cursor: pointer;
+    }
+    main { padding: 50px 6%; max-width: 1400px; margin: auto; }
+    h2 { color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--panel);
+      padding: 24px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+    }
+    .card h3 { margin-top: 0; }
+    .card p { color: var(--muted); }
+    .card img {
+      width: 100%;
+      height: 210px;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    .price { font-size: 23px; font-weight: bold; color: var(--accent); }
+    footer {
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #334155;
+      color: var(--muted);
+    }
+    @media (max-width: 600px) {
+      header { flex-direction: column; }
+      nav a { margin: 0 7px; }
+      .hero { padding: 60px 6%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">ZORVEX IMPORTS</div>
+    <nav>
+      <a href="#inicio">Início</a>
+      <a href="#categorias">Categorias</a>
+      <a href="#produtos">Produtos</a>
+    </nav>
+  </header>
+
+  <section class="hero" id="inicio">
+    <h1>Conectando você às novidades</h1>
+    <p>Produtos selecionados, tecnologia e soluções para o seu dia a dia.</p>
+    <a class="btn" href="#produtos">Explorar catálogo</a>
+  </section>
+
+  <main>
+    <section id="categorias">
+      <h2>Nossas categorias</h2>
+      <div class="grid">
+        <div class="card"><h3>Eletrônicos</h3><p>Tecnologia para o cotidiano.</p></div>
+        <div class="card"><h3>Acessórios</h3><p>Praticidade e funcionalidade.</p></div>
+        <div class="card"><h3>Tecnologia</h3><p>Novidades e soluções inteligentes.</p></div>
+        <div class="card"><h3>Ferramentas</h3><p>Produtos para diferentes necessidades.</p></div>
+      </div>
+    </section>
+
+    <section id="produtos" style="margin-top:60px">
+      <h2>Catálogo de produtos</h2>
+      <div class="grid" id="lista-produtos">
+        <div class="card">
+          <h3>Catálogo em preparação</h3>
+          <p>Em breve, confira nossos produtos disponíveis.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    © 2026 Zorvex Imports. Todos os direitos reservados.
+  </footer>
+</body>
+</html>
+

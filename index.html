@@ -1,383 +1,49 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Zorvex Pharma CDE - produtos selecionados, tecnologia e novidades.">
-  <title>Zorvex Pharma CDE | Catálogo</title>
-  <style>
-    :root {
-      --bg: #0b1220;
-      --panel: #162235;
-      --accent: #d6ae64;
-      --text: #f8fafc;
-      --muted: #b9c3d1;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, sans-serif;
-    }
-    header {
-      padding: 24px 6%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      border-bottom: 1px solid #334155;
-    }
-    .brand {
-      font-size: 25px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-    nav a {
-      color: var(--text);
-      text-decoration: none;
-      margin-left: 16px;
-    }
-    .hero {
-      padding: 85px 6%;
-      text-align: center;
-      background: linear-gradient(140deg, #14233a, #0b1220);
-    }
-    h1 { font-size: clamp(32px, 5vw, 56px); }
-    .hero p { color: var(--muted); font-size: 19px; }
-    .btn {
-      display: inline-block;
-      padding: 14px 24px;
-      background: var(--accent);
-      color: #111827;
-      text-decoration: none;
-      border-radius: 9px;
-      font-weight: bold;
-      border: 0;
-      cursor: pointer;
-    }
-    main { padding: 50px 6%; max-width: 1400px; margin: auto; }
-    h2 { color: var(--accent); }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 20px;
-    }
-    .card {
-      background: var(--panel);
-      padding: 24px;
-      border-radius: 14px;
-      border: 1px solid #334155;
-    }
-    .card h3 { margin-top: 0; }
-    .card p { color: var(--muted); }
-    .card img {
-      width: 100%;
-      height: 210px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-    .price { font-size: 23px; font-weight: bold; color: var(--accent); }
-    footer {
-      padding: 30px;
-      text-align: center;
-      border-top: 1px solid #334155;
-      color: var(--muted);
-    }
-    @media (max-width: 600px) {
-      header { flex-direction: column; }
-      nav a { margin: 0 7px; }
-      .hero { padding: 60px 6%; }
-    }
-    
-/* ZORVEX PHARMA CDE — ESTILO PREMIUM DOS PRODUTOS */
-
-/* Cartões somente da seção de produtos */
-#produtos .card {
-  background: #162235;
-  border: 1px solid #334155;
-  border-radius: 18px;
-  padding: 16px;
-  overflow: hidden;
-  transition: transform 0.3s ease,
-              box-shadow 0.3s ease,
-              border-color 0.3s ease;
-}
-
-/* Elevação do cartão */
-#produtos .card:hover {
-  transform: translateY(-6px);
-  border-color: #d6ae64;
-  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
-}
-
-/* Área da fotografia */
-#produtos .card img {
-  display: block;
-  width: 100%;
-  height: 250px;
-  padding: 18px;
-  background: #ffffff;
-  border-radius: 12px;
-  object-fit: contain;
-  transition: transform 0.35s ease;
-}
-
-/* Zoom suave na fotografia */
-#produtos .card:hover img {
-  transform: scale(1.035);
-}
-
-/* Nome do produto */
-#produtos .card h3 {
-  font-size: 19px;
-  line-height: 1.4;
-  margin: 18px 0 10px;
-  color: #ffffff;
-}
-
-/* Descrição */
-#produtos .card p {
-  color: #b9c3d1;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-/* Preço */
-#produtos .card .price {
-  color: #d6ae64;
-  font-size: 24px;
-  font-weight: 800;
-  margin-top: 14px;
-}
-
-/* Ajustes para celulares */
-@media (max-width: 600px) {
-  #produtos .card {
-    padding: 14px;
-  }
-
-  #produtos .card img {
-    height: 220px;
-  }
-
-  #produtos .card:hover {
-    transform: none;
-  }
-}
-
-/* Respeitar preferência por movimento reduzido */
-@media (prefers-reduced-motion: reduce) {
-  #produtos .card,
-  #produtos .card img {
-    transition: none;
-  }
-}
-/* Apresentação técnica dos produtos */
-#produtos .card .product-details {
-  display: inline-block;
-  background: rgba(214, 174, 100, 0.10);
-  color: #e5c58b;
-  border: 1px solid rgba(214, 174, 100, 0.30);
-  border-radius: 8px;
-  padding: 8px 11px;
-  font-size: 13px;
-  font-weight: 600;
-  line-height: 1.5;
-  margin: 0 0 12px;
-}
-    /* ZORVEX PHARMA CDE — OCULTAR CATEGORIAS */
-#categorias {
-  display: none;
-}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Zorvex Pharma CDE — informações sobre produtos de saúde e cuidados pessoais em Ciudad del Este, Paraguai.">
+<title>Zorvex Pharma CDE | Catálogo informativo</title>
+<style>
+:root{--bg:#0b1220;--panel:#162235;--gold:#d6ae64;--text:#f8fafc;--muted:#b9c3d1;--line:#344257}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+a{color:inherit}header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 6%;border-bottom:1px solid var(--line)}.brand{font-size:clamp(18px,2.2vw,25px);font-weight:800;letter-spacing:.04em;color:var(--gold)}nav{display:flex;gap:20px}nav a{text-decoration:none;font-weight:600}nav a:hover{color:var(--gold)}.hero{text-align:center;padding:85px 6%;background:radial-gradient(circle at 50% 0%,#233955,#0b1220 75%)}.eyebrow{color:var(--gold);text-transform:uppercase;letter-spacing:.16em;font-size:12px;font-weight:700}.hero h1{font-size:clamp(30px,5vw,56px);line-height:1.12;max-width:880px;margin:18px auto}.hero p{max-width:690px;margin:0 auto 26px;color:var(--muted);font-size:18px}.btn{display:inline-block;padding:13px 25px;border-radius:10px;background:var(--gold);color:#111827;font-weight:800;text-decoration:none}.btn:hover{filter:brightness(1.08)}main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3vw,32px);color:var(--gold);margin:0 0 12px}.section-intro{color:var(--muted);margin:0 0 25px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(245px,1fr));gap:22px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s}.card:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 12px 30px #0005}.photo{background:#fff;border-radius:12px;min-height:240px;display:flex;align-items:center;justify-content:center;overflow:hidden}.photo img{width:100%;height:250px;object-fit:contain;padding:12px}.photo .placeholder{color:#334155;font-size:14px}.card h3{font-size:21px;margin:17px 0 8px}.details{display:inline-block;color:#f1d49d;background:#d6ae6419;border:1px solid #d6ae6450;padding:7px 10px;border-radius:8px;font-size:13px;font-weight:700}.card .description{color:var(--muted);font-size:14px;line-height:1.55;margin:12px 0}.card .status{color:var(--muted);font-size:13px;margin:15px 0 2px}.notice{margin-top:32px;padding:18px 20px;background:#ffffff08;border:1px solid var(--line);border-radius:12px;color:var(--muted);font-size:14px}.info{margin-top:54px;border-top:1px solid var(--line);padding-top:36px}.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}.info-item{padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.info-item strong{display:block;color:var(--gold);margin-bottom:8px}.info-item p{margin:0;color:var(--muted);font-size:14px}footer{text-align:center;padding:30px 6%;border-top:1px solid var(--line);color:var(--muted);font-size:13px}@media(max-width:600px){header{flex-direction:column;padding:18px 5%}.hero{padding:60px 5%}.hero p{font-size:16px}main{padding:35px 5% 55px}.photo img{height:230px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.card{transition:none}}
+</style>
 </head>
 <body>
-  <header>
-    <div class="brand">ZORVEX PHARMA CDE</div>
-    <nav>
-      <a href="#inicio">Início</a>
-      <a href="#produtos">Produtos</a>
-    </nav>
-  </header>
-
-  <section class="hero" id="inicio">
-    <h1>Saúde, cuidado e bem-estar em Ciudad del Este</h1>
-    <p>Um espaço dedicado a informações sobre produtos de saúde, beleza e cuidados pessoais.</p>
-    <a class="btn" href="#produtos">Explorar produtos</a>
-  </section>
-
-  <main>
-
-<section id="categorias">
-  <h2>Nossas categorias</h2>
-  <div class="grid" id="lista-categorias">
-    <div class="card">
-      Carregando categorias...
-    </div>
-  </div>
-</section>
-
-    <section id="produtos" style="margin-top:60px">
-      <h2>Produtos</h2>
-      <div class="grid" id="lista-produtos">
-        <div class="card">
-          <h3>Catálogo em preparação</h3>
-          <p>Em breve, confira nossos produtos disponíveis.</p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    © 2026 Zorvex Pharma CDE. Todos os direitos reservados.
-  </footer>
-
+<header><div class="brand">ZORVEX PHARMA CDE</div><nav aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#produtos">Produtos</a><a href="#informacoes">Informações</a></nav></header>
+<section class="hero" id="inicio"><div class="eyebrow">Ciudad del Este · Paraguai</div><h1>Saúde, cuidado e bem-estar em Ciudad del Este</h1><p>Conheça as apresentações e informações dos produtos do nosso catálogo.</p><a class="btn" href="#produtos">Explorar produtos</a></section>
+<main>
+<section id="produtos"><h2>Produtos</h2><p class="section-intro">Informações de apresentação dos produtos cadastrados. A disponibilidade depende de confirmação.</p><div class="grid" id="lista-produtos" aria-live="polite"><div class="card">Carregando catálogo...</div></div><div class="notice">As informações deste catálogo não substituem orientação profissional. Medicamentos sujeitos a prescrição e às regras locais de dispensação e divulgação.</div></section>
+<section class="info" id="informacoes"><h2>Informações importantes</h2><div class="info-grid"><div class="info-item"><strong>Localização</strong><p>Ciudad del Este, Paraguai.</p></div><div class="info-item"><strong>Apresentações</strong><p>Confira a concentração e a quantidade por embalagem em cada produto.</p></div><div class="info-item"><strong>Disponibilidade</strong><p>Informações e disponibilidade sujeitas a confirmação.</p></div></div></section>
+</main>
+<footer>© 2026 Zorvex Pharma CDE. Todos os direitos reservados.</footer>
 <script>
-const SUPABASE_URL = "https://omrdhnnvzngocheyfcly.supabase.co";
-const SUPABASE_KEY = "sb_publishable_-BtO4hsplQ47jC6yTC4T6w_xrTSKGWz";
-
-async function carregarProdutos() {
-  const lista = document.getElementById("lista-produtos");
-
-  try {
-    const resposta = await fetch(
-      `${SUPABASE_URL}/rest/v1/products?select=name,description,price,image_url,stock,slug,category_id,concentration,package_quantity,availability_note&active=eq.true&order=created_at.desc`,
-      {
-        headers: {
-          "apikey": SUPABASE_KEY
-        }
-      }
-    );
-
-    if (!resposta.ok) {
-      throw new Error(`Erro HTTP ${resposta.status}`);
-    }
-
-    const produtos = await resposta.json();
-    lista.replaceChildren();
-
-    if (produtos.length === 0) {
-      const aviso = document.createElement("div");
-      aviso.className = "card";
-      aviso.textContent = "Nosso catálogo está sendo preparado. Em breve teremos novidades!";
-      lista.appendChild(aviso);
-      return;
-    }
-
-    produtos.forEach(produto => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      if (produto.image_url) {
-        const imagem = document.createElement("img");
-        imagem.src = produto.image_url;
-        imagem.alt = produto.name;
-        imagem.loading = "lazy";
-        card.appendChild(imagem);
-      }
-
-      const nome = document.createElement("h3");
-      nome.textContent = produto.name;
-      card.appendChild(nome);
-      // Apresentação técnica do produto
-const detalhes = [];
-
-if (produto.concentration) {
-  detalhes.push(produto.concentration);
-}
-
-if (produto.package_quantity) {
-  detalhes.push(
-    `Embalagem com ${produto.package_quantity} unidades`
-  );
-}
-
-if (detalhes.length > 0) {
-  const apresentacao = document.createElement("p");
-  apresentacao.className = "product-details";
-  apresentacao.textContent = detalhes.join(" • ");
-  card.appendChild(apresentacao);
-}
-
-      if (produto.description) {
-        const descricao = document.createElement("p");
-        descricao.textContent = produto.description;
-        card.appendChild(descricao);
-      }
-
-      const preco = document.createElement("p");
-      preco.className = "price";
-      preco.textContent = Number(produto.price).toLocaleString("pt-BR", {
-        style: "currency",
-        currency: "BRL"
-      });
-      card.appendChild(preco);
-
-      const disponibilidade = document.createElement("p");
-      disponibilidade.textContent =
-        produto.stock > 0
-          ? "Disponível para consulta"
-          : "Consulte a disponibilidade";
-      card.appendChild(disponibilidade);
-
-      lista.appendChild(card);
-    });
-
-  } catch (erro) {
-    console.error("Erro ao carregar produtos:", erro);
-    lista.textContent = "Não foi possível carregar o catálogo neste momento.";
+const SUPABASE_URL = 'https://omrdhnnvzngocheyfcly.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_-BtO4hsplQ47jC6yTC4T6w_xrTSKGWz';
+const lista = document.getElementById('lista-produtos');
+function elemento(tag,classe,conteudo){const e=document.createElement(tag);if(classe)e.className=classe;if(conteudo!==undefined)e.textContent=conteudo;return e;}
+async function carregarProdutos(){
+ try{
+  const url = `${SUPABASE_URL}/rest/v1/products?select=name,description,image_url,slug,concentration,package_quantity,availability_note&active=eq.true&order=name.asc`;
+  const resposta=await fetch(url,{headers:{apikey:SUPABASE_KEY}});
+  if(!resposta.ok)throw new Error(`HTTP ${resposta.status}`);
+  const produtos=await resposta.json();lista.replaceChildren();
+  if(!produtos.length){lista.appendChild(elemento('div','card','O catálogo está em preparação.'));return;}
+  for(const p of produtos){
+   const card=elemento('article','card');const foto=elemento('div','photo');
+   if(p.image_url){const img=document.createElement('img');img.src=p.image_url;img.alt=`Embalagem de ${p.name}`;img.loading='lazy';img.decoding='async';img.onerror=()=>{foto.replaceChildren(elemento('span','placeholder','Imagem indisponível'));};foto.appendChild(img);}else foto.appendChild(elemento('span','placeholder','Imagem em preparação'));
+   card.appendChild(foto);card.appendChild(elemento('h3','',p.name));
+   const detalhes=[p.concentration,p.package_quantity?`Caixa com ${p.package_quantity} ampolas`:null].filter(Boolean);
+   if(detalhes.length)card.appendChild(elemento('div','details',detalhes.join(' · ')));
+   if(p.description)card.appendChild(elemento('p','description',p.description));
+   card.appendChild(elemento('p','status',p.availability_note||'Disponibilidade sob consulta'));
+   lista.appendChild(card);
   }
+ }catch(err){console.error('Erro ao carregar catálogo:',err);lista.replaceChildren(elemento('div','card','Não foi possível carregar o catálogo agora. Tente novamente mais tarde.'));}
 }
-
-async function carregarCategorias() {
-  const lista = document.getElementById("lista-categorias");
-  if (!lista) return;
-
-  try {
-    const resposta = await fetch(
-      `${SUPABASE_URL}/rest/v1/categories?select=id,name,slug&order=name.asc`,
-      {
-        headers: {
-          apikey: SUPABASE_KEY
-        }
-      }
-    );
-
-    if (!resposta.ok) {
-      throw new Error(`Erro HTTP ${resposta.status}`);
-    }
-
-    const categorias = await resposta.json();
-    lista.replaceChildren();
-
-    if (categorias.length === 0) {
-      lista.textContent = "Nenhuma categoria disponível.";
-      return;
-    }
-
-    categorias.forEach(categoria => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      const titulo = document.createElement("h3");
-      titulo.textContent = categoria.name;
-
-      card.appendChild(titulo);
-      lista.appendChild(card);
-    });
-
-  } catch (erro) {
-    console.error("Erro ao carregar categorias:", erro);
-    lista.textContent = "Não foi possível carregar as categorias.";
-  }
-}
-
-carregarCategorias();
-carregarProdutos();</script>
-
+carregarProdutos();
+</script>
 </body>
 </html>
-<!-- Atualização de publicação Zorvex Pharma CDE -->
-<!-- Atualizacao de publicacao Zorvex Pharma CDE - 04-11-2026 -->

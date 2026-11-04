@@ -218,7 +218,7 @@ async function carregarCategorias() {
 
   try {
     const resposta = await fetch(
-      `${SUPABASE_URL}/categories?select=id,name,slug&active=eq.true&order=name.asc`,
+      `${SUPABASE_URL}/rest/v1/categories?select=id,name,slug&order=name.asc`,
       {
         headers: {
           apikey: SUPABASE_KEY

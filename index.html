@@ -46,6 +46,10 @@ main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3
 .receipt-panel{margin:18px 0;padding:20px;border:1px solid var(--gold);border-radius:14px;background:#14243a;color:#fff}
 .receipt-panel[hidden]{display:none}.receipt-panel h3{color:var(--gold);margin:0 0 8px}.receipt-panel p{margin:7px 0}.receipt-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}.receipt-table th,.receipt-table td{padding:8px 5px;border-bottom:1px solid #52637a;text-align:left}.receipt-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.receipt-actions button,.receipt-actions a{border:1px solid var(--gold);background:var(--gold);color:#111827;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}.receipt-actions a{background:transparent;color:var(--gold)}
 @media print{body>*:not(#receipt-root){display:none!important}#receipt-root{display:block!important;position:static!important;color:#000!important;background:#fff!important;padding:0!important}#receipt-root .receipt-panel{display:block!important;color:#000!important;background:#fff!important;border:1px solid #777!important}#receipt-root .receipt-panel h3{color:#000!important}#receipt-root .receipt-actions{display:none!important}#receipt-root .receipt-table th,#receipt-root .receipt-table td{border-color:#bbb!important}}
+/* Marca no comprovante (inclusive na impressão) */
+.receipt-brand{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.receipt-brand img{width:78px;height:78px;object-fit:contain}
+@media print{#receipt-root .receipt-brand{display:flex!important;align-items:center!important}#receipt-root .receipt-brand img{display:block!important;width:78px!important;height:78px!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
 /* Cabeçalho centralizado, com navegação acessível em telas pequenas */
 header{position:relative;min-height:155px;justify-content:center}
 header .brand{justify-content:center}
@@ -147,7 +151,11 @@ async function carregarProdutos(){
 function mostrarComprovante(result,payload,linhas){
  const root=document.getElementById('receipt-root'),panel=document.getElementById('receipt-panel');
  panel.replaceChildren();
- const titulo=el('h3','','ZORVEX IMPORTS CDE — Comprovante de solicitação');panel.appendChild(titulo);
+ const marca=el('div','receipt-brand');
+ const logo=el('img');logo.src='logo-zorvex.png';logo.alt='Logomarca Zorvex Imports CDE';logo.width=78;logo.height=78;
+ marca.appendChild(logo);
+ const titulo=el('h3','','ZORVEX IMPORTS CDE — Comprovante de solicitação');
+ marca.appendChild(titulo);panel.appendChild(marca);
  const data=new Date();const dataTexto=data.toLocaleString('pt-BR');
  const campos=[['Número',String(result.order_number)],['Data',dataTexto],['Cliente',payload.customer_name],['WhatsApp',payload.customer_whatsapp],['Destino',`${payload.city} / ${payload.state_region||'-'} — ${payload.country_code}`],['Endereço',`${payload.street}, ${payload.street_number} — ${payload.neighborhood}${payload.postal_code?' — '+payload.postal_code:''}`],['Forma de pagamento',payload.payment_method==='credit'?'Cartão de crédito':'PIX / débito'],['Status','Recebido — aguardando análise comercial']];
  for(const [k,v] of campos){const p=el('p');p.appendChild(el('strong','',k+': '));p.appendChild(document.createTextNode(v||'-'));panel.appendChild(p);}
@@ -155,7 +163,15 @@ function mostrarComprovante(result,payload,linhas){
  for(const item of linhas){const tr=el('tr');for(const v of [item.name,String(item.quantity),formatarBRL(item.unit_price),formatarBRL(item.quantity*item.unit_price)])tr.appendChild(el('td','',v));tbody.appendChild(tr);}tabela.appendChild(tbody);panel.appendChild(tabela);
  for(const [k,v] of [['Subtotal',result.subtotal],['Frete',result.shipping_fee],['Total estimado',result.total]]){const p=el('p');p.appendChild(el('strong','',k+': '));p.appendChild(document.createTextNode(formatarBRL(v)));panel.appendChild(p);}
  panel.appendChild(el('p','','Este documento comprova apenas o recebimento da solicitação. Não representa pagamento, compra aprovada, autorização de fornecimento ou envio. Sujeito à análise comercial, disponibilidade e requisitos aplicáveis.'));
- const actions=el('div','receipt-actions');const imprimir=el('button','','Imprimir / salvar como PDF');imprimir.type='button';imprimir.onclick=()=>window.print();actions.appendChild(imprimir);
+ const actions=el('div','receipt-actions');const imprimir=el('button','','Imprimir / salvar como PDF');imprimir.type='button';imprimir.onclick=()=>{
+  const tituloAnterior=document.title;
+  document.title=`Zorvex - Pedido ${result.order_number}`;
+  const restaurar=()=>{document.title=tituloAnterior;window.removeEventListener('afterprint',restaurar);};
+  window.addEventListener('afterprint',restaurar);
+  window.print();
+  // Fallback para navegadores que não disparam afterprint.
+  setTimeout(restaurar,15000);
+ };actions.appendChild(imprimir);
  const texto=[
   '*ZORVEX IMPORTS CDE — SOLICITAÇÃO DE PEDIDO*',
   `Pedido nº ${result.order_number}`,

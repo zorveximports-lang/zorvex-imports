@@ -29,6 +29,8 @@ main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3
 .carousel-arrow{top:50%}
 .carousel-dots{bottom:10px}
 @media(max-width:700px){.hero{padding:12px 2% 22px}.hero-slide{display:block;min-height:0;padding:0;aspect-ratio:6/1}.carousel-arrow{width:28px;height:30px}.carousel-dots{bottom:5px;gap:6px}.carousel-dot{width:8px;height:8px}.carousel-dot[aria-current="true"]{width:20px}}
+/* Cards simplificados: preços e informações complementares */
+.card .badge-group{display:none}.card h3{margin:15px 0 5px}.card .details{background:none;border:0;padding:0;color:var(--muted);font-weight:500;font-size:13px}.price-panel{margin-top:16px}.price-main{font-size:29px}.credit{margin-top:9px}.payment-icons{margin:0 0 10px}.pay-chip{padding:5px 8px;font-size:11px}.card .status{margin:0}.detail-button{margin-top:13px}.contact-button{margin-top:10px}.detail-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-field{min-width:0}.detail-field span{overflow-wrap:anywhere}
 </style>
 </head>
 <body>
@@ -58,10 +60,16 @@ const lista=document.getElementById('lista-produtos');
 function el(tag,classe,conteudo){const e=document.createElement(tag);if(classe)e.className=classe;if(conteudo!==undefined)e.textContent=conteudo;return e;}
 async function carregarProdutos(){
  try{
-  const url=`${SUPABASE_URL}/rest/v1/products?select=name,description,image_url,slug,concentration,package_quantity,availability_note,price,credit_price&active=eq.true&order=name.asc`;
-  const resposta=await fetch(url,{headers:{apikey:SUPABASE_KEY}});
-  if(!resposta.ok)throw new Error(`HTTP ${resposta.status}`);
-  const produtos=await resposta.json();lista.replaceChildren();
+  // As categorias inativas não aparecem, mesmo quando o produto está ativo.
+  const [resposta,categoriasResposta]=await Promise.all([
+   fetch(`${SUPABASE_URL}/rest/v1/products?select=name,description,image_url,slug,category_id,concentration,package_quantity,availability_note,price_pix,price_credit&active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_KEY}}),
+   fetch(`${SUPABASE_URL}/rest/v1/categories?select=id,active`,{headers:{apikey:SUPABASE_KEY}})
+  ]);
+  if(!resposta.ok||!categoriasResposta.ok)throw new Error(`Erro ao consultar catálogo: produtos ${resposta.status}; categorias ${categoriasResposta.status}`);
+  const [todosProdutos,categorias]=await Promise.all([resposta.json(),categoriasResposta.json()]);
+  const categoriasAtivas=new Set(categorias.filter(c=>c.active===true).map(c=>String(c.id)));
+  const produtos=todosProdutos.filter(p=>p.category_id!=null&&categoriasAtivas.has(String(p.category_id)));
+  lista.replaceChildren();
   if(!produtos.length){lista.appendChild(el('div','card','O catálogo está em preparação.'));return;}
   for(const p of produtos){
    const card=el('article','card');const foto=el('div','photo');
@@ -70,7 +78,7 @@ async function carregarProdutos(){
    card.appendChild(foto);card.appendChild(el('h3','',p.name));
    const detalhes=[p.concentration,p.package_quantity?`Caixa com ${p.package_quantity} frascos`:null].filter(Boolean);
    if(detalhes.length)card.appendChild(el('div','details',detalhes.join(' · ')));
-   const bottom=el('div','card-bottom');bottom.appendChild(el('p','status',p.availability_note||'Disponibilidade sob consulta'));
+   const bottom=el('div','card-bottom');
    const preco=el('div','price-panel');
    const icons=el('div','payment-icons');
    const paymentIcons=[
@@ -80,14 +88,14 @@ async function carregarProdutos(){
    ];
    for(const [label,svg] of paymentIcons){const chip=el('span','pay-chip');chip.innerHTML=svg;chip.appendChild(document.createTextNode(label));icons.appendChild(chip);}preco.appendChild(icons);
    preco.appendChild(el('div','price-label','PIX ou débito · valor por caixa'));
-   preco.appendChild(el('div','price-main',p.price!=null?formatarBRL(p.price):'Sob consulta'));
-   preco.appendChild(el('div','credit',p.credit_price!=null?`Cartão de crédito: ${formatarBRL(p.credit_price)} em até 6x`:'Crédito: sob consulta'));
-   preco.appendChild(el('div','credit','Envio: R$ 50,00 por pedido · pagamento antecipado · somente Paraguai'));bottom.appendChild(preco);
+   preco.appendChild(el('div','price-main',p.price_pix!=null?formatarBRL(p.price_pix):'Sob consulta'));
+   preco.appendChild(el('div','credit',p.price_credit!=null?`Cartão de crédito: ${formatarBRL(p.price_credit)} em até 6x`:'Crédito: sob consulta'));
+   bottom.appendChild(preco);
    const botao=el('button','detail-button','Ver detalhes');botao.type='button';botao.setAttribute('aria-expanded','false');
    const painel=el('div','expanded');painel.hidden=true;const volume=p.slug==='gluconex-15mg'?'1,0 mL':'0,5 mL';
    const campos=el('div','detail-grid');
-   for(const [rotulo,valor] of [['Concentração',p.concentration||'Consulte a embalagem'],['Embalagem',`${p.package_quantity||4} frascos`],['Volume por frasco',volume],['Envio','Somente Paraguai']]){const campo=el('div','detail-field');campo.appendChild(el('strong','',rotulo));campo.appendChild(el('span','',valor));campos.appendChild(campo);}painel.appendChild(campos);
-   painel.appendChild(el('p','detail-note','Produto sujeito a prescrição e às normas locais aplicáveis. Consulte as condições de envio e os requisitos legais.'));const contato=el('a','contact-button','Consultar disponibilidade no WhatsApp');contato.href=`https://wa.me/595975878634?text=${encodeURIComponent('Olá! Gostaria de consultar a disponibilidade de '+p.name+'.')}`;contato.target='_blank';contato.rel='noopener noreferrer';bottom.appendChild(contato);
+   for(const [rotulo,valor] of [['Concentração',p.concentration||'Consulte a embalagem'],['Embalagem',`${p.package_quantity||4} frascos`],['Volume por frasco',volume],['Disponibilidade',p.availability_note||'Sob consulta'],['Envio','R$ 50,00 por pedido · somente Paraguai'],['Pagamento','Antecipado']]){const campo=el('div','detail-field');campo.appendChild(el('strong','',rotulo));campo.appendChild(el('span','',valor));campos.appendChild(campo);}painel.appendChild(campos);
+   painel.appendChild(el('p','detail-note','Produto sujeito a prescrição e às normas locais aplicáveis. Consulte as condições de envio e os requisitos legais.'));const contato=el('a','contact-button','Consultar disponibilidade no WhatsApp');contato.href=`https://wa.me/595975878634?text=${encodeURIComponent('Olá! Gostaria de consultar a disponibilidade de '+p.name+'.')}`;contato.target='_blank';contato.rel='noopener noreferrer';painel.appendChild(contato);
    botao.addEventListener('click',()=>{painel.hidden=!painel.hidden;botao.setAttribute('aria-expanded',String(!painel.hidden));botao.textContent=painel.hidden?'Ver detalhes':'Ocultar detalhes';});
    bottom.appendChild(botao);bottom.appendChild(painel);card.appendChild(bottom);lista.appendChild(card);
   }

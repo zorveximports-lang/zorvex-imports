@@ -108,7 +108,7 @@ async function carregarProdutos(){
  try{
   // As categorias inativas não aparecem, mesmo quando o produto está ativo.
   const [resposta,categoriasResposta]=await Promise.all([
-   fetch(`${SUPABASE_URL}/rest/v1/products?select=id,name,description,image_url,slug,category_id,concentration,package_quantity,availability_note,price_pix,price_credit&active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_KEY}}),
+   fetch(`${SUPABASE_URL}/rest/v1/products?select=id,name,description,image_url,slug,category_id,concentration,package_quantity,availability_note,price_pix,credit_price&active=eq.true&order=name.asc`,{headers:{apikey:SUPABASE_KEY}}),
    fetch(`${SUPABASE_URL}/rest/v1/categories?select=id,active`,{headers:{apikey:SUPABASE_KEY}})
   ]);
   if(!resposta.ok||!categoriasResposta.ok)throw new Error(`Erro ao consultar catálogo: produtos ${resposta.status}; categorias ${categoriasResposta.status}`);
@@ -136,7 +136,7 @@ async function carregarProdutos(){
    for(const [label,svg] of paymentIcons){const chip=el('span','pay-chip');chip.innerHTML=svg;chip.appendChild(document.createTextNode(label));icons.appendChild(chip);}preco.appendChild(icons);
    preco.appendChild(el('div','price-label','PIX ou débito · valor por caixa'));
    preco.appendChild(el('div','price-main',p.price_pix!=null?formatarBRL(p.price_pix):'Sob consulta'));
-   preco.appendChild(el('div','credit',p.price_credit!=null?`Cartão de crédito: ${formatarBRL(p.price_credit)} em até 6x`:'Crédito: sob consulta'));
+   preco.appendChild(el('div','credit',p.credit_price!=null?`Cartão de crédito: ${formatarBRL(p.credit_price)} em até 6x`:'Crédito: sob consulta'));
    bottom.appendChild(preco);
    // Informações essenciais exibidas uma única vez no cartão.
    if(p.id){const adicionar=el('button','add-cart','Adicionar ao carrinho');adicionar.type='button';adicionar.addEventListener('click',()=>{carrinho.set(p.id,Math.min(20,(carrinho.get(p.id)||0)+1));atualizarCarrinho();abrirCarrinho();});bottom.appendChild(adicionar);}
@@ -164,7 +164,8 @@ function mostrarComprovante(result,payload,linhas){
   `WhatsApp: ${payload.customer_whatsapp}`,
   `Destino: ${payload.city} / ${payload.state_region||'-'} — ${payload.country_code}`,
   `Endereço: ${payload.street}, ${payload.street_number} — ${payload.neighborhood}`,
-  `Referência: ${payload.address_reference||'-'}`,
+  `CEP/Código postal: ${payload.postal_code||'-'}`, 
+  `Referência: ${payload.address_reference||'-'}`, 
   `Pagamento preferido: ${payload.payment_method==='credit'?'Crédito (até 6x)':'PIX / débito'}`,
   '', '*PRODUTOS*',
   ...linhas.map(i=>`${i.quantity}x ${i.name} — ${formatarBRL(i.unit_price)} un. — ${formatarBRL(i.quantity*i.unit_price)}`),
@@ -179,8 +180,8 @@ function mostrarComprovante(result,payload,linhas){
 }
 function atualizarCarrinho(){
  const linhas=document.getElementById('cart-lines');linhas.replaceChildren();let totalPix=0,totalCredito=0,quantidade=0;
- for(const [id,qtd] of carrinho){const p=catalogo.get(id);if(!p)continue;quantidade+=qtd;totalPix+=Number(p.price_pix||0)*qtd;totalCredito+=Number(p.price_credit||0)*qtd;
- const linha=el('div','cart-line');linha.appendChild(el('strong','',p.name));linha.appendChild(el('div','',`PIX/débito: ${formatarBRL(Number(p.price_pix||0)*qtd)} · Crédito: ${formatarBRL(Number(p.price_credit||0)*qtd)}`));
+ for(const [id,qtd] of carrinho){const p=catalogo.get(id);if(!p)continue;quantidade+=qtd;totalPix+=Number(p.price_pix||0)*qtd;totalCredito+=Number(p.credit_price||0)*qtd;
+ const linha=el('div','cart-line');linha.appendChild(el('strong','',p.name));linha.appendChild(el('div','',`PIX/débito: ${formatarBRL(Number(p.price_pix||0)*qtd)} · Crédito: ${formatarBRL(Number(p.credit_price||0)*qtd)}`));
  const controles=el('div','cart-line-controls');const menos=el('button','','−');menos.type='button';menos.setAttribute('aria-label',`Diminuir ${p.name}`);menos.onclick=()=>{if(qtd<=1)carrinho.delete(id);else carrinho.set(id,qtd-1);atualizarCarrinho();};
  const mais=el('button','','+');mais.type='button';mais.setAttribute('aria-label',`Aumentar ${p.name}`);mais.disabled=qtd>=20;mais.onclick=()=>{carrinho.set(id,Math.min(20,qtd+1));atualizarCarrinho();};
  const remover=el('button','','Remover');remover.type='button';remover.onclick=()=>{carrinho.delete(id);atualizarCarrinho();};controles.append(menos,el('span','',String(qtd)),mais,remover);linha.appendChild(controles);linhas.appendChild(linha);
@@ -218,8 +219,17 @@ document.getElementById('checkout-form').addEventListener('submit',async e=>{
   const itensComprovante=[...carrinho].map(([id,quantity])=>{
     const produto=catalogo.get(id);
     return {name:produto?.name||'Produto',quantity,
-      unit_price:Number(payload.payment_method==='credit'?produto?.price_credit:produto?.price_pix)||0};
+      unit_price:Number(payload.payment_method==='credit'?produto?.credit_price:produto?.price_pix)||0};
   });
+  // Evita apresentar valores locais divergentes do pedido registrado no servidor.
+  const subtotalLocal=itensComprovante.reduce((s,i)=>s+i.quantity*i.unit_price,0);
+  const subtotalServidor=Number(result.subtotal);
+  if(!Number.isFinite(subtotalServidor)||Math.abs(subtotalLocal-subtotalServidor)>0.01){
+    msg.textContent=`Solicitação nº ${result.order_number} registrada, mas há divergência de preços. Não envie o resumo pelo WhatsApp. Entre em contato com a Zorvex para confirmar os valores.`;
+    carrinho.clear();atualizarCarrinho();
+    document.getElementById('cart-drawer').hidden=true;
+    return;
+  }
   mostrarComprovante(result,payload,itensComprovante);
   msg.textContent=`Solicitação nº ${result.order_number} recebida. O comprovante está disponível na página.`;
   carrinho.clear();atualizarCarrinho();form.reset();

@@ -41,6 +41,11 @@ main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3
 .cart-line{padding:14px 0;border-bottom:1px solid var(--line)}.cart-line strong{display:block}.cart-line-controls{display:flex;align-items:center;gap:10px;margin-top:8px}.cart-total{padding:18px 0;border-top:1px solid var(--gold);margin-top:20px}.cart-alert{padding:13px;border:1px solid var(--gold);border-radius:10px;color:var(--muted);font-size:13px}.add-cart{width:100%;margin-top:12px;padding:12px;background:var(--gold);color:#111827;border:0;border-radius:9px;font-weight:800;cursor:pointer}
 
 .checkout-form{margin-top:22px;border-top:1px solid var(--line);padding-top:18px}.checkout-form h3{color:var(--gold);margin:0 0 12px}.checkout-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.checkout-field{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--muted)}.checkout-field.full{grid-column:1/-1}.checkout-field input,.checkout-field select{width:100%;border:1px solid #56647a;background:#111e31;border-radius:8px;padding:11px;color:#fff;font:inherit}.checkout-submit{width:100%;margin-top:16px;padding:13px;background:var(--gold);border:0;border-radius:9px;color:#111827;font-weight:800;cursor:pointer}.checkout-submit:disabled{opacity:.55;cursor:not-allowed}.checkout-message{margin-top:12px;font-size:13px;line-height:1.5}.checkout-note{font-size:12px;color:var(--muted);margin-top:10px}.checkout-turnstile{margin-top:16px;min-height:65px}@media(max-width:600px){.checkout-grid{grid-template-columns:1fr}}
+
+/* Comprovante de solicitação */
+.receipt-panel{margin:18px 0;padding:20px;border:1px solid var(--gold);border-radius:14px;background:#14243a;color:#fff}
+.receipt-panel[hidden]{display:none}.receipt-panel h3{color:var(--gold);margin:0 0 8px}.receipt-panel p{margin:7px 0}.receipt-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}.receipt-table th,.receipt-table td{padding:8px 5px;border-bottom:1px solid #52637a;text-align:left}.receipt-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.receipt-actions button,.receipt-actions a{border:1px solid var(--gold);background:var(--gold);color:#111827;border-radius:8px;padding:10px 12px;font-weight:700;cursor:pointer;text-decoration:none;font-size:13px}.receipt-actions a{background:transparent;color:var(--gold)}
+@media print{body>*:not(#receipt-root){display:none!important}#receipt-root{display:block!important;position:static!important;color:#000!important;background:#fff!important;padding:0!important}#receipt-root .receipt-panel{display:block!important;color:#000!important;background:#fff!important;border:1px solid #777!important}#receipt-root .receipt-panel h3{color:#000!important}#receipt-root .receipt-actions{display:none!important}#receipt-root .receipt-table th,#receipt-root .receipt-table td{border-color:#bbb!important}}
 </style>
 </head>
 <body>
@@ -78,6 +83,7 @@ main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3
 <div class="checkout-turnstile"><div class="cf-turnstile" data-sitekey="0x4AAAAAAF0WHFNebFXhqbjb" data-theme="dark"></div></div>
 <p class="checkout-note">O envio da solicitação não representa compra concluída. A equipe verificará os requisitos e entrará em contato para aprovação e pagamento.</p>
 <button id="checkout-submit" class="checkout-submit" type="submit" disabled>Enviar solicitação</button><div id="checkout-message" class="checkout-message" role="status" aria-live="polite"></div></form></section></div>
+<div id="receipt-root" hidden aria-live="polite"><section id="receipt-panel" class="receipt-panel" aria-label="Comprovante da solicitação"></section></div>
 <footer>© 2026 Zorvex Imports CDE. Todos os direitos reservados.</footer>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>
@@ -135,6 +141,22 @@ async function carregarProdutos(){
    card.appendChild(bottom);lista.appendChild(card);
   }
  }catch(err){console.error('Erro ao carregar catálogo:',err);lista.replaceChildren(el('div','card','Não foi possível carregar o catálogo agora. Tente novamente mais tarde.'));}
+}
+function mostrarComprovante(result,payload,linhas){
+ const root=document.getElementById('receipt-root'),panel=document.getElementById('receipt-panel');
+ panel.replaceChildren();
+ const titulo=el('h3','','ZORVEX IMPORTS CDE — Comprovante de solicitação');panel.appendChild(titulo);
+ const data=new Date();const dataTexto=data.toLocaleString('pt-BR');
+ const campos=[['Número',String(result.order_number)],['Data',dataTexto],['Cliente',payload.customer_name],['WhatsApp',payload.customer_whatsapp],['Destino',`${payload.city} / ${payload.state_region||'-'} — ${payload.country_code}`],['Endereço',`${payload.street}, ${payload.street_number} — ${payload.neighborhood}${payload.postal_code?' — '+payload.postal_code:''}`],['Forma de pagamento',payload.payment_method==='credit'?'Cartão de crédito':'PIX / débito'],['Status','Recebido — aguardando análise comercial']];
+ for(const [k,v] of campos){const p=el('p');p.appendChild(el('strong','',k+': '));p.appendChild(document.createTextNode(v||'-'));panel.appendChild(p);}
+ const tabela=el('table','receipt-table');const cab=el('tr');for(const c of ['Produto','Qtd.','Valor unit.','Total'])cab.appendChild(el('th','',c));const thead=el('thead');thead.appendChild(cab);tabela.appendChild(thead);const tbody=el('tbody');
+ for(const item of linhas){const tr=el('tr');for(const v of [item.name,String(item.quantity),formatarBRL(item.unit_price),formatarBRL(item.quantity*item.unit_price)])tr.appendChild(el('td','',v));tbody.appendChild(tr);}tabela.appendChild(tbody);panel.appendChild(tabela);
+ for(const [k,v] of [['Subtotal',result.subtotal],['Frete',result.shipping_fee],['Total estimado',result.total]]){const p=el('p');p.appendChild(el('strong','',k+': '));p.appendChild(document.createTextNode(formatarBRL(v)));panel.appendChild(p);}
+ panel.appendChild(el('p','','Este documento comprova apenas o recebimento da solicitação. Não representa pagamento, compra aprovada, autorização de fornecimento ou envio. Sujeito à análise comercial, disponibilidade e requisitos aplicáveis.'));
+ const actions=el('div','receipt-actions');const imprimir=el('button','','Imprimir / salvar como PDF');imprimir.type='button';imprimir.onclick=()=>window.print();actions.appendChild(imprimir);
+ const texto=`Olá, Zorvex! Gostaria de acompanhar minha solicitação nº ${result.order_number}, no valor estimado de ${formatarBRL(result.total)}.`;
+ const whats=el('a','','Consultar pedido no WhatsApp');whats.href=`https://wa.me/595975878634?text=${encodeURIComponent(texto)}`;whats.target='_blank';whats.rel='noopener noreferrer';actions.appendChild(whats);panel.appendChild(actions);
+ root.hidden=false;root.style.maxWidth='900px';root.style.margin='25px auto';root.style.padding='0 18px';root.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function atualizarCarrinho(){
  const linhas=document.getElementById('cart-lines');linhas.replaceChildren();let totalPix=0,totalCredito=0,quantidade=0;

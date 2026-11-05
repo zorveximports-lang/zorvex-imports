@@ -20,19 +20,19 @@ main{max-width:1400px;padding:48px 6% 65px;margin:auto}h2{font-size:clamp(24px,3
 @media(max-width:700px){.hero{padding:22px 4% 30px}.hero-slide{grid-template-columns:1fr;min-height:490px;padding:38px 43px 55px;text-align:center;gap:6px}.hero-slide p{font-size:15px}.hero-slide h1,.hero-slide h2{font-size:clamp(27px,7vw,36px)}.hero-visual{min-height:140px;order:-1}.hero-visual img{width:120px;max-height:120px}.visual-emblem{width:110px;height:110px;font-size:44px;box-shadow:0 0 0 10px #d6ae6412}.visual-emblem svg{width:60px;height:60px}.carousel-arrow{width:30px;height:36px;font-size:20px}.carousel-prev{left:5px}.carousel-next{right:5px}}
 @media(prefers-reduced-motion:reduce){.hero-slides{transition:none}}
 
-/* Banners premium em proporção original, sem esticar nem cortar a arte */
+/* Banners premium recortados: faixas desfocadas reduzidas, sem distorcer o conteúdo */
 .hero{padding:24px 4% 38px}
-.hero-carousel{max-width:1500px;aspect-ratio:12/5}
-.hero-slide{display:block;min-height:0;padding:0;aspect-ratio:12/5}
-.hero-slide img{display:block;width:100%;height:auto;aspect-ratio:12/5;object-fit:contain}
+.hero-carousel{max-width:1500px;aspect-ratio:4/1}
+.hero-slide{display:block;min-height:0;padding:0;aspect-ratio:4/1}
+.hero-slide img{display:block;width:100%;height:100%;aspect-ratio:4/1;object-fit:contain}
 .hero-slide>a{display:block}
 .carousel-arrow{top:50%}
 .carousel-dots{bottom:10px}
-@media(max-width:700px){.hero{padding:12px 2% 22px}.hero-slide{display:block;min-height:0;padding:0;aspect-ratio:12/5}.carousel-arrow{width:28px;height:30px}.carousel-dots{bottom:5px;gap:6px}.carousel-dot{width:8px;height:8px}.carousel-dot[aria-current="true"]{width:20px}}
+@media(max-width:700px){.hero{padding:12px 2% 22px}.hero-slide{display:block;min-height:0;padding:0;aspect-ratio:4/1}.carousel-arrow{width:28px;height:30px}.carousel-dots{bottom:5px;gap:6px}.carousel-dot{width:8px;height:8px}.carousel-dot[aria-current="true"]{width:20px}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="#inicio" aria-label="Zorvex Imports CDE — início"><img src="logo-zorvex.png" alt="Logomarca Zorvex" width="90" height="90"><span class="brand-name">ZORVEX <small>IMPORTS CDE</small></span></a><nav aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#produtos">Produtos</a><a href="#informacoes">Informações</a><a href="https://wa.me/595975878634" target="_blank" rel="noopener noreferrer">WhatsApp</a></nav></header>
+<header><a class="brand" href="#inicio" aria-label="Zorvex Imports CDE — início"><img src="logo-zorvex-circular.png" alt="Logomarca Zorvex" width="90" height="90"><span class="brand-name">ZORVEX <small>IMPORTS CDE</small></span></a><nav aria-label="Navegação principal"><a href="#inicio">Início</a><a href="#produtos">Produtos</a><a href="#informacoes">Informações</a><a href="https://wa.me/595975878634" target="_blank" rel="noopener noreferrer">WhatsApp</a></nav></header>
 <section class="hero" id="inicio" aria-label="Destaques da Zorvex">
  <div class="hero-carousel" aria-roledescription="carrossel" aria-label="Destaques institucionais">
   <div class="hero-slides" id="hero-slides">

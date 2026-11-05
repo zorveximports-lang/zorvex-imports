@@ -195,8 +195,17 @@ document.getElementById('checkout-form').addEventListener('submit',async e=>{
   const r=await fetch(`${SUPABASE_URL}/functions/v1/zorvex-checkout`,{method:'POST',headers:{'Content-Type':'application/json','apikey':SUPABASE_KEY},body:JSON.stringify(payload)});
   const result=await r.json();
   if(!r.ok||!result.success)throw new Error(result.error||'Não foi possível enviar.');
-  msg.textContent=`Solicitação nº ${result.order_number} recebida. Aguardando análise e contato da equipe Zorvex.`;
+  // Guarda o resumo antes de limpar o carrinho, usando os valores oficiais retornados pelo servidor.
+  const itensComprovante=[...carrinho].map(([id,quantity])=>{
+    const produto=catalogo.get(id);
+    return {name:produto?.name||'Produto',quantity,
+      unit_price:Number(payload.payment_method==='credit'?produto?.price_credit:produto?.price_pix)||0};
+  });
+  mostrarComprovante(result,payload,itensComprovante);
+  msg.textContent=`Solicitação nº ${result.order_number} recebida. O comprovante está disponível na página.`;
   carrinho.clear();atualizarCarrinho();form.reset();
+  document.getElementById('cart-drawer').hidden=true;
+  document.getElementById('receipt-root').scrollIntoView({behavior:'smooth',block:'start'});
  }catch(err){msg.textContent=err.message||'Falha ao enviar solicitação.';}
  finally{if(window.turnstile)window.turnstile.reset();btn.disabled=!CHECKOUT_PUBLICADO||carrinho.size===0;}
 });
